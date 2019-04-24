@@ -1,0 +1,119 @@
+* {
+    font-family: 'Roboto', sans-serif;
+    box-sizing: border-box;
+}
+
+body {
+    background: #0C1821
+}
+
+.autocomplete {
+    background: #fff;
+    position: relative;
+    width: 400px;
+    color: #4D4D4D;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 2px rgba(0, 0, 0, 0.24);
+}
+
+.autocomplete .close {
+    position: absolute;
+    font-size: 13px;
+    z-index: 10;
+    top: 10px;
+    left: calc(100% - 50px);
+    color: #aaa;
+    cursor: pointer;
+    display: none;
+}
+
+.autocomplete .close.visible {
+    display: block;
+}
+
+input {
+    padding: 10px 10px;
+    font-weight: 300;
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    color: #666;
+}
+
+.dialog {
+    width: 100%;
+    display: none;
+    min-height: 40px;
+    max-height: 330px;
+    overflow: scroll;
+    border-top: 1px solid #f4f4f4;
+}
+
+.dialog.open {
+    display: block;
+}
+
+.dialog div {
+    padding: 20px 10px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.dialog div:hover {
+    background: #f2f2f2;
+}
+
+button {
+    position: absolute;
+    top: 0;
+    left: 400px;
+    padding: 10px 10px;
+    margin-left: 10px;
+    background: #3498db;
+    border: none;
+    font-size: 14px;
+    color: #222;
+    text-transform: uppercase;
+    transition: 0.4s;
+    border-radius: 2px;
+}
+
+button:hover {
+    background: #2980b9;
+    color: white;
+    cursor: pointer;
+}
+
+ul {
+    list-style: none;
+}
+
+ul li {
+    font-size: 1.4rem;
+    color: white;
+    line-height: 1.8;
+}
+
+ul li:hover {
+    cursor: pointer;
+}
+
+ul li p {
+    display: none;
+    max-width: 96%;
+    margin: 0 auto;
+    padding: 0 16px;
+    font-size: 16px;
+    text-indent: 12px;
+    line-height: 1.8;
+}
+
+ul li p::first-letter {
+    font-size: 1.6rem;
+}
+
+.shown {
+    display: block;
+    transition: .8s;
+}
