@@ -58,6 +58,11 @@ close.addEventListener('click', () => {
     input.value = '';
     input.focus();
     close.classList.remove('visible');
+    ul = document.querySelector('ul');
+    h4 = document.querySelector('h4');
+    ul.textContent = '';
+    h4.textContent = '';
+
 });
 
 document.body.addEventListener('click', (e) => {
@@ -67,44 +72,49 @@ document.body.addEventListener('click', (e) => {
 })
 
 initDialog();
-
 const btn = document.querySelector('button');
 btn.addEventListener('click', () => {
-    let code = '';
-    switch (input.value) {
-        case "France":
-            code = "FR"
-            break;
-        case "Germany":
-            code = "DE"
-            break;
-        case "Poland":
-            code = "PL"
-            break;
-        case "Spain":
-            code = "ES"
-            break;
-    }
+    if (input.value == '') {
+        alert("First select country");
+    } else {
+        let code = '';
+        switch (input.value) {
+            case "France":
+                code = "FR"
+                break;
+            case "Germany":
+                code = "DE"
+                break;
+            case "Poland":
+                code = "PL"
+                break;
+            case "Spain":
+                code = "ES"
+                break;
+        }
 
-    fetch(`https://api.openaq.org/v1/latest?country=${code}&order_by=measurements[0].value&parameter=pm10&sort=desc&limit=2000`)
-        .then(response => response.json())
-        .then(response => {
-            const results = response.results.map(result => result.city);
-            const filtredCities = [results[0]];
+        fetch(`https://api.openaq.org/v1/latest?country=${code}&order_by=measurements[0].value&parameter=pm10&sort=desc&limit=2000`)
+            .then(response => response.json())
+            .then(response => {
+                const results = response.results.map(result => result.city);
+                const filtredCities = [results[0]];
 
-            for (let i = 1; filtredCities.length < 10; i++) {
-                filtredCities.includes(results[i]);
-                if (!filtredCities.includes(results[i])) {
-                    filtredCities.push(results[i]);
+                for (let i = 1; filtredCities.length < 10; i++) {
+                    filtredCities.includes(results[i]);
+                    if (!filtredCities.includes(results[i])) {
+                        filtredCities.push(results[i]);
+                    }
                 }
-            }
-            renderCities(filtredCities);
-        })
+                renderCities(filtredCities, code);
+            })
+    }
 })
 
-renderCities = (cities) => {
+renderCities = (cities, code) => {
     const ul = document.querySelector('ul');
     ul.textContent = '';
+    const h4 = document.querySelector('h4');
+    h4.textContent = 'Click below on city name to read more info'
     cities.forEach(city => {
         const li = document.createElement('li');
         li.textContent = city;
@@ -115,7 +125,7 @@ renderCities = (cities) => {
             let descParagraph = li.firstElementChild;
 
             if (descParagraph.textContent == '') {
-                fetch(`https://en.wikipedia.org/w/api.php?action=query&prop=extracts&rvprop=content&format=json&origin=*&titles=${cityDescription}`)
+                fetch(`https://${code}.wikipedia.org/w/api.php?action=query&prop=extracts&exintro=true&explaintext=true&exsectionformat=plain&rvprop=content&format=json&origin=*&titles=${cityDescription}`)
                     .then(response => {
                         if (response.ok) {
                             return response;
@@ -127,18 +137,22 @@ renderCities = (cities) => {
                         let page = response.query.pages;
                         let pageId = Object.keys(page)[0];
                         let content = page[pageId].extract;
+                        descParagraph.textContent = content;
                         const strippedContent = content.replace(/(<([^>]+)>)/ig, "");
-                        descParagraph.textContent = strippedContent;
-                        descParagraph.classList.toggle('shown');
+                        // descParagraph.textContent = strippedContent;
+                        // descParagraph.classList.toggle('shown');
+                        return strippedContent;
                     })
-                    .catch(error => {
-                        descParagraph.textContent = `There is nothing more to show. Try to check another city.`;
-                    })
+                    .catch(error =>
+                        descParagraph.textContent = `There is nothing more to show. Try to check another city.`)
+                    .then(result =>
+                        descParagraph.classList.toggle('shown'))
 
             } else {
                 descParagraph.classList.toggle('shown')
             };
-            // localStorage.setItem("cityDescription", "30")
-        })
+            //     // localStorage.setItem("cityDescription", "30")
+
+        });
     });
-}
+};
